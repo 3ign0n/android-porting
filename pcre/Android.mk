@@ -17,6 +17,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := libpcre
 LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 LOCAL_PRELINK_MODULE := false
+LOCAL_MODULE_TAGS := samples
 
 intermediates := $(call local-intermediates-dir)
 
@@ -50,7 +51,7 @@ LOCAL_CFLAGS += -O3 -I. -DHAVE_CONFIG_H
 GEN := $(LOCAL_PATH)/pcre_chartables.c
 $(GEN): $(LOCAL_PATH)/pcre_chartables.c.dist
 	$(hide) cp $(LOCAL_PATH)/pcre_chartables.c.dist $@
-LOCAL_GENERATED_SOURCES += $(GEN)
+#LOCAL_GENERATED_SOURCES += $(GEN)
 LOCAL_SRC_FILES += pcre_chartables.c
 
 GEN := $(LOCAL_PATH)/pcre.h
@@ -75,5 +76,6 @@ LOCAL_MODULE := pcregrep
 LOCAL_SRC_FILES := pcregrep.c
 LOCAL_CFLAGS += -O3 -I. -DHAVE_CONFIG_H
 LOCAL_SHARED_LIBRARIES := libpcre
+LOCAL_MODULE_TAGS := samples
 
 include $(BUILD_EXECUTABLE)

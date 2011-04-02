@@ -1,6 +1,5 @@
 ########
-NOTE: THIS DOCUMENT IS UNFINISHED
-########
+# HOW TO BUILD pcre
 
 == FYI
 * I tried on Mac OS X 10.6.6 and using Android PDK 2.3.3(ginger bread), later I'll try ubuntu 10.10(maverik) and Android 2.2(froyo)
@@ -11,22 +10,33 @@ NOTE: THIS DOCUMENT IS UNFINISHED
 * I got original Android.mk from this thread
     Issue 1344:	PCRE library needs packaging
     http://code.google.com/p/android/issues/detail?id=1344
-    for Android 2.3.3, LOCAL_MODULE_TAGS directive is missing, so I update it
+    for Android 2.3.3, LOCAL_MODULE_TAGS directive is missing, 
+    and I got errors such as:
+      build/core/binary.mk:335: target `external/pcre/pcre-8.12/pcre_chartables.o' doesn't match the target pattern
+	  arm-eabi-gcc: no input files
+      make: *** [external/pcre/pcre-8.12/pcre_chartables.o] Error 1
+	so, I update and fix it
+
 
 == building pcre for Android emulator
 * download freash tarball from pcre project site
   http://sourceforge.net/projects/pcre/files/
   and extract it into ${PDK_ROOT}/external
   At the time writing this, 8.12 is the latest version.
+  I tried pcre-8.10, it also works fine.
 
-* run configure script. like this:
-    > cd ${PDK_ROOT}/external/pcre-8.12
-    > ./configure --host=arm-eabi CC=arm-eabi-gcc CPP=arm-eabi-cpp CFLAGS="-nostdlib" CPPFLAGS="-I${PDK_ROOT}/prebuilt/darwin-x86/toolchain/arm-eabi-4.4.3/lib/gcc/arm-eabi/4.4.3/include-fixed -I${PDK_ROOT}/ndk/build/platforms/android-8/arch-arm/usr/include -I${PDK_ROOT}/ndk/build/platforms/android-8/arch-x86/usr/include/sys/" LDFLAGS="-Wl,-rpath-link=${PDK_ROOT}/out/target/product/generic/system/lib -L${PDK_ROOT}/out/target/product/generic/system/lib -lc" LIBS="-lc" --without-bzip2 --enable-utf8 --enable-unicode-properties
-
+* run configure script, which generates config.h and so on. like this:
+    > export PDK_ROOT=<where you repo init android source tree>
+    > export PATH=<path to compiler>:$PATH
+			  
+	> cd ${PDK_ROOT}/external/pcre-8.12
+    > ./configure --host=arm-eabi CC=arm-eabi-gcc CPP=arm-eabi-cpp CFLAGS="-nostdlib" CPPFLAGS="-I${PDK_ROOT}/prebuilt/darwin-x86/toolchain/arm-eabi-4.4.3/lib/gcc/arm-eabi/4.4.3/include-fixed -I${PDK_ROOT}/development/ndk/platforms/android-8/include -I${PDK_ROOT}/bionic/libc/include/ -I${PDK_ROOT}/bionic/libc/arch-arm/include/ -I${PDK_ROOT}/bionic/libc/kernel/common/ -I${PDK_ROOT}/bionic/libc/kernel/common/linux/" LDFLAGS="-Wl,-rpath-link=${PDK_ROOT}/out/target/product/generic/system/lib -L${PDK_ROOT}/out/target/product/generic/system/lib -lc" LIBS="-lc" --enable-utf8 --enable-unicode-properties
+  NOTE: Even in the korg/gingerbread-release branch, ndk/build/platforms/android-10 isn't found, so I used android-8, whose target is Android 2.2
+  NOTE: if you got an error "configure: error: C preprocessor "arm-eabi-cpp" fails sanity check", see config.log, and you may see some headers not found message, in the case, revise/add include paths
+  
 * copy Android.mk and build it
     > cp <path to git cloned directory>/Android.mk ${PDK_ROOT}/external/pcre-8.12
     > . ${PDK_ROOT}/build/envsetup.sh
 	> mm SHOW_COMMANDS=1
-  you'll get the binary in ${PDK_ROOT}/out/target/products/system/lib/libpcre.so
+  you'll get the binary in ${PDK_ROOT}/out/target/products/system/lib/libpcre.so and ${PDK_ROOT}/out/target/products/system/bin/pcregrep
 
-./configure --host=arm-eabi CC=arm-eabi-gcc CPP=arm-eabi-cpp CFLAGS="-nostdlib" CPPFLAGS="-I${PDK_ROOT}/prebuilt/darwin-x86/toolchain/arm-eabi-4.4.3/lib/gcc/arm-eabi/4.4.3/include-fixed -I${PDK_ROOT}/ndk/build/platforms/android-8/arch-arm/usr/include -I${PDK_ROOT}/ndk/build/platforms/android-8/arch-x86/usr/include/sys/" LDFLAGS="-Wl,-rpath-link=${PDK_ROOT}/out/target/product/generic/system/lib -L${PDK_ROOT}/out/target/product/generic/system/lib -lc" LIBS="-lc" --without-bzip2 --enable-utf8 --enable-unicode-properties
