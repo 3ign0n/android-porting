@@ -1,0 +1,61 @@
+########
+NOTE: THIS DOCUMENT IS UNFINISHED
+########
+
+== FYI
+* lighttpd requires libpcre
+* I tried on Mac OS X 10.6.6 and using Android PDK 2.3.3(ginger bread), later I'll try ubuntu 10.10(maverik) and Android 2.2(froyo)
+* At writing this document, lighttpd 1.4.28 is the latest version, so I tried it.
+
+== Building lighttpd for Android
+* First of all, you should read Eric Chan's great post. Thanks a lot for his great effort.
+  http://ericdev.blogspot.com/2009/09/add-lighttpd-to-android-as-web-service.html
+  His article is a little old, so, I got some error when I simply followed his instructions.
+  And his Android.mk is inefficient and generated binary is big footprint because common source file is compiled and statically linked to each module.
+  So I revise and improve that point.
+
+* run configure script and generate config.h, src/configfile.h etc (Eric skipped this step, instead, his method requires his step(3)-(5))
+    > patch -p1 < lighttpd-1.4.28_configure.patch
+	> ./configure --host=arm-eabi CC=arm-eabi-gcc CPP=arm-eabi-cpp CFLAGS="-nostdlib" CPPFLAGS="-I${PDK_ROOT}/bionic/libc/include/ -I${PDK_ROOT}/bionic/libc/arch-arm/include/ -I${PDK_ROOT}/bionic/libc/kernel/common/  -I${PDK_ROOT}/bionic/libc/kernel/common/linux -I${PDK_ROOT}/bionic/libc/kernel/common/linux/ -I${PDK_ROOT}/bionic/libc/kernel/arch-arm/ -I${PDK_ROOT}/development/ndk/platforms/android-8/include -I${PDK_ROOT}/prebuilt/ndk/android-ndk-r4/platforms/android-8/arch-arm/usr/include/" LDFLAGS="-Wl,-rpath-link=${PDK_ROOT}/out/target/product/generic/system/lib -L${PDK_ROOT}/out/target/product/generic/system/lib" --without-bzip2
+  NOTE: if you want, add --with-webdav-props and --with-webdav-locks, those options doesn't require any extra libraries
+
+* build lighttpd
+    change PDK_ROOT variable in Android.mk fitting to your environment
+    > mm
+
+== deploy lighttpd and modules
+* For your products, you should put them into system image. but here, I'm just testing on the emulator,
+  so I pushed them into /data/www with adb
+
+
+== How to access lighttpd on the emulator
+* Before launching lighttpd, check your config file syntax. like this:
+    > /data/www/bin/lighttpd -f /data/www/etc/lighttpd.conf -t
+  then execute it foreground
+    > /data/www/bin/lighttpd -f /data/www/etc/lighttpd.conf -m /data/www/lib -D
+
+=== MacOS X
+* Setting up tun/tap
+   install tuntaposx from macports
+     > sudo port install tuntaposx
+  
+* change owner /dev/tapX device, for example, I'm using tap10
+    > sudo chown <user name>.<group name> /dev/tap10
+  
+* booting up emulator
+  user-space slirp networking "-net user" is required for adb, when I didn't add the options, the emulator was crashed in my environment
+    > emulator -avd AVD2.2 -show-kernel -verbose -qemu -net nic,vlan=0 -net user -net nic,vlan=1 -net tap,vlan=1,fd=tap10
+  
+  Hey! How can I configure the host network interface?
+  No tap device can be seen in the command result.
+    > sudo ifconfig -a
+
+  OK, I have a another choice.
+    > emulator -avd AVD2.2 -show-kernel -verbose -qemu -redir tcp:8008::80
+  here, 8080 is host port, 80 is listen port which you wrote in lighttpd.conf
+  then access port 8080 on the host
+    > wget -O - http://localhost:8080
+
+  Yay! I got the message from lighttpd!!
+  
+  

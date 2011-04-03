@@ -1,0 +1,123 @@
+--- lighttpd-1.4.28.orig/configure	2010-08-22 20:45:48.000000000 +0900
++++ lighttpd-1.4.28/configure	2011-04-03 11:51:49.000000000 +0900
+@@ -11453,11 +11453,12 @@
+ fi
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_header_stdc" >&5
+ $as_echo "$ac_cv_header_stdc" >&6; }
+-if test $ac_cv_header_stdc = yes; then
++# force to set 1
++#if test $ac_cv_header_stdc = yes; then
+ 
+ $as_echo "#define STDC_HEADERS 1" >>confdefs.h
+ 
+-fi
++#fi
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sys/wait.h that is POSIX.1 compatible" >&5
+ $as_echo_n "checking for sys/wait.h that is POSIX.1 compatible... " >&6; }
+@@ -11500,20 +11501,22 @@
+ 
+ fi
+ 
++# Android surely has these headers except some, but autoconf doesn't detect them!!
++# excluded headers are, sys/devpoll.h sys/filio.h sys/event.h  sys/port.h uuid/uuid.h
+ for ac_header in arpa/inet.h fcntl.h netinet/in.h stdlib.h string.h \
+ sys/socket.h sys/time.h unistd.h sys/sendfile.h sys/uio.h \
+-getopt.h sys/epoll.h sys/select.h poll.h sys/poll.h sys/devpoll.h sys/filio.h \
+-sys/mman.h sys/event.h sys/port.h pwd.h sys/syslimits.h \
+-sys/resource.h sys/un.h syslog.h sys/prctl.h uuid/uuid.h
++getopt.h sys/epoll.h sys/select.h poll.h sys/poll.h \
++sys/mman.h pwd.h sys/syslimits.h \
++sys/resource.h sys/un.h syslog.h sys/prctl.h 
+ do :
+   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+ ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
+-if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
++#if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
+   cat >>confdefs.h <<_ACEOF
+ #define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
+ _ACEOF
+ 
+-fi
++#fi
+ 
+ done
+ 
+@@ -11673,6 +11676,7 @@
+ fi
+ 
+ ac_fn_c_check_type "$LINENO" "off_t" "ac_cv_type_off_t" "$ac_includes_default"
++ac_cv_type_off_t=yes
+ if test "x$ac_cv_type_off_t" = x""yes; then :
+ 
+ else
+@@ -11684,6 +11688,7 @@
+ fi
+ 
+ ac_fn_c_check_type "$LINENO" "pid_t" "ac_cv_type_pid_t" "$ac_includes_default"
++ac_cv_type_pid_t=yes
+ if test "x$ac_cv_type_pid_t" = x""yes; then :
+ 
+ else
+@@ -11695,6 +11700,7 @@
+ fi
+ 
+ ac_fn_c_check_type "$LINENO" "size_t" "ac_cv_type_size_t" "$ac_includes_default"
++ac_cv_type_size_t=yes
+ if test "x$ac_cv_type_size_t" = x""yes; then :
+ 
+ else
+@@ -13449,6 +13455,9 @@
+     for ac_header in zlib.h
+ do :
+   ac_fn_c_check_header_mongrel "$LINENO" "zlib.h" "ac_cv_header_zlib_h" "$ac_includes_default"
++# I have no idea to make ac_cv_header_zlib_h yes, but Android surely have zlib.
++# so I force to set "yes"
++ac_cv_header_zlib_h=yes
+ if test "x$ac_cv_header_zlib_h" = x""yes; then :
+   cat >>confdefs.h <<_ACEOF
+ #define HAVE_ZLIB_H 1
+@@ -14991,12 +15000,14 @@
+ do :
+   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
+-if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
++# Android surely supports these functions, but autoconf cannot detect them
++# I don't know how to fix it, instead apply trickly workaround here
++#if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+   cat >>confdefs.h <<_ACEOF
+ #define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+ _ACEOF
+ 
+-fi
++#fi
+ done
+ 
+ 
+@@ -15041,6 +15052,8 @@
+ 
+ fi
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_sizeof_long" >&5
++# force to set 4
++ac_cv_sizeof_long=4
+ $as_echo "$ac_cv_sizeof_long" >&6; }
+ 
+ 
+@@ -15062,6 +15075,8 @@
+   if ac_fn_c_compute_int "$LINENO" "(long int) (sizeof (off_t))" "ac_cv_sizeof_off_t"        "$ac_includes_default"; then :
+ 
+ else
++  # no idea, checking sizeof off_t is failed
++  ac_cv_type_off_t=no
+   if test "$ac_cv_type_off_t" = yes; then
+      { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+@@ -15078,6 +15093,8 @@
+ 
+ 
+ 
++# force to set 8
++ac_cv_sizeof_long=8
+ cat >>confdefs.h <<_ACEOF
+ #define SIZEOF_OFF_T $ac_cv_sizeof_off_t
+ _ACEOF
