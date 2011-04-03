@@ -30,7 +30,7 @@
     > export PATH=<path to compiler>:$PATH
 			  
 	> cd ${PDK_ROOT}/external/pcre-8.12
-    > ./configure --host=arm-eabi CC=arm-eabi-gcc CPP=arm-eabi-cpp CFLAGS="-nostdlib" CPPFLAGS="-I${PDK_ROOT}/prebuilt/darwin-x86/toolchain/arm-eabi-4.4.3/lib/gcc/arm-eabi/4.4.3/include-fixed -I${PDK_ROOT}/development/ndk/platforms/android-8/include -I${PDK_ROOT}/bionic/libc/include/ -I${PDK_ROOT}/bionic/libc/arch-arm/include/ -I${PDK_ROOT}/bionic/libc/kernel/common/ -I${PDK_ROOT}/bionic/libc/kernel/common/linux/" LDFLAGS="-Wl,-rpath-link=${PDK_ROOT}/out/target/product/generic/system/lib -L${PDK_ROOT}/out/target/product/generic/system/lib -lc" LIBS="-lc" --enable-utf8 --enable-unicode-properties
+    > ./configure --host=arm-eabi CC=arm-eabi-gcc CPP=arm-eabi-cpp CFLAGS="-nostdlib" CPPFLAGS="-I${PDK_ROOT}/development/ndk/platforms/android-8/include -I${PDK_ROOT}/bionic/libc/include/ -I${PDK_ROOT}/bionic/libc/arch-arm/include/ -I${PDK_ROOT}/bionic/libc/kernel/common/ -I${PDK_ROOT}/bionic/libc/kernel/common/linux/" LDFLAGS="-Wl,-rpath-link=${PDK_ROOT}/out/target/product/generic/system/lib -L${PDK_ROOT}/out/target/product/generic/system/lib"  --enable-utf8 --enable-unicode-properties
   NOTE: Even in the korg/gingerbread-release branch, ndk/build/platforms/android-10 isn't found, so I used android-8, whose target is Android 2.2
   NOTE: if you got an error "configure: error: C preprocessor "arm-eabi-cpp" fails sanity check", see config.log, and you may see some headers not found message, in the case, revise/add include paths
   
