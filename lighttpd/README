@@ -1,5 +1,7 @@
 ########
 NOTE: THIS DOCUMENT IS UNFINISHED
+NOTE: in Android.mk, common source static link mode, that is BUILD_OPTION_COMMON_SRC_STATIC := true, has linking errors.
+            if you want to build common sources as statically linked modules, use Eric Chan's Android.mk commited at 462c320edc5f8127ba730ecbe648ebdd1424d30b
 ########
 
 == FYI
@@ -33,6 +35,13 @@ NOTE: THIS DOCUMENT IS UNFINISHED
     > /data/www/bin/lighttpd -f /data/www/etc/lighttpd.conf -t
   then execute it foreground
     > /data/www/bin/lighttpd -f /data/www/etc/lighttpd.conf -m /data/www/lib -D
+
+  NOTE: if you build common sources as dynamically linked library liblighttpd_common.so, 
+             and if you don't deploy it into /system/lib, launch lighttpd with LD_LIBRARY_PATH environment variable. like this:
+			   > LD_LIBRARY_PATH=/data/www/lib /data/www/bin/lighttpd -f /data/www/etc/lighttpd.conf -m /data/www/lib -D
+			 if you don't specify LD_LIBRARY_PATH, you'll got an error
+			   link_image[1995]: failed to link /data/www/bin/lighttpd
+			   CANNOT LINK EXECUTABLE
 
 === MacOS X
 * Setting up tun/tap
