@@ -1,0 +1,317 @@
+LOCAL_PATH:= $(call my-dir)
+
+PDK_ROOT := /Volumes/Data/develop/Android/PDK
+
+BUILD_OPTION_COMMON_CFLAGS += -DHAVE_CONFIG_H -DHAVE_VERSION_H -I$(LOCAL_PATH) -I$(LOCAL_PATH)/src -D_REENTRANT -D__EXTENSIONS__ -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGE_FILES -DLIGHTTPD_STATIC -g -Wall
+BUILD_OPTION_COMMON_LDFLAGS +=  -lpcre
+
+# module configuration
+BUILD_OPTION_MOD_FLV_STREAMING := false
+BUILD_OPTION_MOD_EVASIVE := false
+BUILD_OPTION_MOD_WEBDAV := true
+BUILD_OPTION_MOD_MAGNET := false
+BUILD_OPTION_MOD_CML := false
+BUILD_OPTION_MOD_TRIGGER_B4_DL := false
+BUILD_OPTION_MOD_MYSQL_VHOST := false
+BUILD_OPTION_MOD_CGI := false
+BUILD_OPTION_MOD_STATICFILE := false
+BUILD_OPTION_MOD_DIRLISTING := true
+BUILD_OPTION_MOD_INDEXFILE := true
+BUILD_OPTION_MOD_SETENV := false
+BUILD_OPTION_MOD_ALIAS := false
+BUILD_OPTION_MOD_USERDIR := false
+BUILD_OPTION_MOD_RRDTOOL := false
+BUILD_OPTION_MOD_USERTRACK := false
+BUILD_OPTION_MOD_PROX := false
+BUILD_OPTION_MOD_SSI := false
+BUILD_OPTION_MOD_SECDOWNLOAD := false
+BUILD_OPTION_MOD_EXPIRE := false
+BUILD_OPTION_MOD_EVHOST := false
+BUILD_OPTION_MOD_SIMPLE_VHOST := false
+BUILD_OPTION_MOD_ACCESS := true
+BUILD_OPTION_MOD_COMPRESS := false
+BUILD_OPTION_MOD_AUTH := false
+BUILD_OPTION_MOD_REWRITE := false
+BUILD_OPTION_MOD_REDIRECT := false
+BUILD_OPTION_MOD_ACCESSLOG := true
+
+####################################################################################
+##common sources
+include $(CLEAR_VARS)
+
+LOCAL_CFLAGS += $(BUILD_OPTION_COMMON_CFLAGS) -W -Wshadow -pedantic -std=gnu99
+LOCAL_LDFLAGS += $(BUILD_OPTION_COMMON_LDFLAGS) -ldl
+
+LOCAL_SRC_FILES := \
+	src/buffer.c src/log.c src/keyvalue.c src/chunk.c \
+	src/http_chunk.c src/stream.c src/fdevent.c src/stat_cache.c \
+	src/joblist.c src/etag.c src/array.c src/data_string.c src/data_count.c \
+	src/data_array.c src/data_integer.c src/md5.c src/data_fastcgi.c \
+	src/fdevent_select.c src/fdevent_poll.c src/fdevent_libev.c\
+	src/fdevent_linux_sysepoll.c src/fdevent_solaris_devpoll.c \
+	src/fdevent_freebsd_kqueue.c src/data_config.c src/bitset.c \
+	src/inet_ntop_cache.c src/crc32.c src/connections-glue.c src/configfile-glue.c \
+	src/http-header-glue.c src/network_write.c src/network_linux_sendfile.c \
+	src/network_freebsd_sendfile.c src/network_writev.c \
+	src/network_solaris_sendfilev.c src/network_openssl.c src/splaytree.c \
+	src/status_counter.c
+
+####################################################################################
+##mod_flv_streaming 
+ifeq ($(BUILD_OPTION_MOD_FLV_STREAMING),true)
+LOCAL_SRC_FILES += \
+    src/mod_flv_streaming.c
+endif
+
+#####################################################################################
+##mod_evasive
+ifeq ($(BUILD_OPTION_MOD_EVASIVE),true)
+LOCAL_SRC_FILES += \
+	src/mod_evasive.c
+endif
+
+#####################################################################################
+##mod_webdav
+ifeq ($(BUILD_OPTION_MOD_WEBDAV),true)
+LOCAL_SRC_FILES += \
+	src/mod_webdav.c
+endif
+
+#####################################################################################
+##mod_magnet
+ifeq ($(BUILD_OPTION_MOD_MAGNET),true)
+LOCAL_SRC_FILES += \
+    src/mod_magnet.c \
+    src/mod_magnet_cache.c
+endif
+
+#####################################################################################
+##mod_cml
+ifeq ($(BUILD_OPTION_MOD_CML),true)
+LOCAL_SRC_FILES += \
+    src/mod_cml.c \
+    src/mod_cml_lua.c \
+    src/mod_cml_funcs.c 
+endif
+
+#####################################################################################
+##mod_trigger_b4_dl
+ifeq ($(BUILD_OPTION_MOD_TRIGGER_B4_DL),true)
+LOCAL_SRC_FILES += \
+    src/mod_trigger_b4_dl.c
+endif
+
+#####################################################################################
+##mod_mysql_vhost
+ifeq ($(BUILD_OPTION_MOD_MYSQL_VHOST),true)
+LOCAL_SRC_FILES += \
+    $(am__liblightcomp_la_SOURCES_DIST) \
+    src/mod_mysql_vhost.c
+endif
+
+#####################################################################################
+##mod_cgi
+ifeq ($(BUILD_OPTION_MOD_CGI),true)
+LOCAL_SRC_FILES += \
+    src/mod_cgi.c
+endif
+
+#####################################################################################
+##mod_staticfile
+ifeq ($(BUILD_OPTION_MOD_STATICFILE),true)
+LOCAL_SRC_FILES += \
+    src/mod_staticfile.c
+endif
+
+#####################################################################################
+##mod_dirlisting
+ifeq ($(BUILD_OPTION_MOD_DIRLISTING),true)
+LOCAL_SRC_FILES += \
+    src/mod_dirlisting.c
+endif
+
+#####################################################################################
+##mod_indexfile
+ifeq ($(BUILD_OPTION_MOD_INDEXFILE),true)
+LOCAL_SRC_FILES += \
+    src/mod_indexfile.c
+endif
+
+#####################################################################################
+##mod_setenv
+ifeq ($(BUILD_OPTION_MOD_SETENV),true)
+LOCAL_SRC_FILES += \
+    src/mod_setenv.c
+endif
+
+#####################################################################################
+##mod_alias
+ifeq ($(BUILD_OPTION_MOD_ALIAS),true)
+LOCAL_SRC_FILES += \
+    src/mod_alias.c
+endif
+
+#####################################################################################
+##mod_userdir
+ifeq ($(BUILD_OPTION_MOD_USERDIR),true)
+LOCAL_SRC_FILES += \
+    src/mod_userdir.c
+endif
+
+#####################################################################################
+##mod_rrdtool
+ifeq ($(BUILD_OPTION_MOD_RRDTOOL),true)
+LOCAL_SRC_FILES += \
+    src/mod_rrdtool.c
+endif
+
+#####################################################################################
+##mod_usertrack
+ifeq ($(BUILD_OPTION_MOD_USERTRACK),true)
+LOCAL_SRC_FILES += \
+    src/mod_usertrack.c
+endif
+
+#####################################################################################
+##mod_proxy
+ifeq ($(BUILD_OPTION_MOD_PROXY),true)
+LOCAL_SRC_FILES += \
+    src/mod_proxy.c
+endif
+
+#####################################################################################
+##mod_ssi
+ifeq ($(BUILD_OPTION_MOD_SSI),true)
+LOCAL_SRC_FILES += \
+    src/mod_ssi_exprparser.c \
+    src/mod_ssi_expr.c \
+    src/mod_ssi.c
+endif
+
+#####################################################################################
+##mod_secdownload
+ifeq ($(BUILD_OPTION_MOD_SECDOWNLOAD),true)
+LOCAL_SRC_FILES += \
+    src/mod_secure_download.c
+endif
+
+#####################################################################################
+##mod_expire
+ifeq ($(BUILD_OPTION_MOD_EXPIRE),true)
+LOCAL_SRC_FILES += \
+    src/mod_expire.c
+endif
+
+#####################################################################################
+##mod_evhost
+ifeq ($(BUILD_OPTION_MOD_EVHOST),true)
+LOCAL_SRC_FILES += \
+    src/mod_evhost.c
+endif
+
+#####################################################################################
+##mod_simple_vhost
+ifeq ($(BUILD_OPTION_MOD_SIMPLE_VHOST),true)
+LOCAL_SRC_FILES += \
+    src/mod_simple_vhost.c
+endif
+
+#####################################################################################
+##mod_fastcgi
+ifeq ($(BUILD_OPTION_MOD_FASTCGI),true)
+LOCAL_SRC_FILES += \
+    src/mod_fastcgi.c
+endif
+
+#####################################################################################
+##mod_extforward
+ifeq ($(BUILD_OPTION_MOD_EXTFORWARD),true)
+LOCAL_SRC_FILES += \
+    src/mod_extforward.c
+endif
+
+#####################################################################################
+##mod_access
+ifeq ($(BUILD_OPTION_MOD_ACCESS),true)
+LOCAL_SRC_FILES += \
+    src/mod_access.c
+endif
+
+#####################################################################################
+##mod_compress
+ifeq ($(BUILD_OPTION_MOD_COMPRESS),true)
+LOCAL_CFLAGS += -I$(PDK_ROOT)/prebuilt/ndk/android-ndk-r4/platforms/android-8/arch-arm/usr/include
+LOCAL_LDFLAGS += -lz
+LOCAL_SRC_FILES += \
+    src/mod_compress.c
+endif
+
+#####################################################################################
+##mod_auth
+ifeq ($(BUILD_OPTION_MOD_AUTH),true)
+LOCAL_SRC_FILES += \
+    src/mod_auth.c \
+    src/http_auth_digest.c \
+    src/http_auth.c
+endif
+
+#####################################################################################
+##mod_rewrite
+ifeq ($(BUILD_OPTION_MOD_REWRITE),true)
+LOCAL_SRC_FILES += \
+    src/mod_rewrite.c
+endif
+
+#####################################################################################
+##mod_redirect
+ifeq ($(BUILD_OPTION_MOD_REDIRECT),true)
+LOCAL_SRC_FILES += \
+    src/mod_redirect.c
+endif
+
+#####################################################################################
+##mod_status
+ifeq ($(BUILD_OPTION_MOD_STATUS),true)
+LOCAL_SRC_FILES += \
+    src/mod_status.c
+endif
+
+#####################################################################################
+##mod_accesslog
+ifeq ($(BUILD_OPTION_MOD_ACCESSLOG),true)
+LOCAL_SRC_FILES += \
+    src/mod_accesslog.c
+endif
+
+#####################################################################################
+##lighttpd
+LOCAL_CFLAGS += $(BUILD_OPTION_COMMON_CFLAGS) -W -Wshadow -pedantic -std=gnu99 -DLIBRARY_DIR="\"/system/lib\""
+
+LOCAL_SRC_FILES += \
+	src/server.c src/response.c src/connections.c src/network.c \
+    src/configfile.c src/configparser.c src/request.c src/proc_open.c \
+    src/plugin.c
+
+LOCAL_MODULE := lighttpd
+LOCAL_MODULE_CLASS := EXECUTABLES
+LOCAL_MODULE_TAGS := samples
+
+include $(BUILD_EXECUTABLE)
+
+#####################################################################################
+##lighttpd-angel
+include $(CLEAR_VARS)
+LOCAL_CFLAGS += $(BUILD_OPTION_COMMON_CFLAGS) -W -Wshadow -pedantic -std=gnu99 -DLIBRARY_DIR="\"/system/lib\"" -DSBIN_DIR="\"/system/bin\""
+LOCAL_LDFLAGS += $(BUILD_OPTION_COMMON_LDFLAGS)
+
+LOCAL_SRC_FILES := \
+    src/lighttpd-angel.c
+
+LOCAL_MODULE := lighttpd-angel
+LOCAL_MODULE_CLASS := EXECUTABLES
+LOCAL_MODULE_TAGS := samples
+
+include $(BUILD_EXECUTABLE)
+
+###########################################################################################################################################################
+

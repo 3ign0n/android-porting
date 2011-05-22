@@ -19,11 +19,19 @@ NOTE: in Android.mk, common source static link mode, that is BUILD_OPTION_COMMON
 * run configure script and generate config.h, src/configfile.h etc (Eric skipped this step, instead, his method requires his step(3)-(5))
     > patch -p1 < lighttpd-1.4.28_configure.patch
 	> ./configure --host=arm-eabi CC=arm-eabi-gcc CPP=arm-eabi-cpp CFLAGS="-nostdlib" CPPFLAGS="-I${PDK_ROOT}/bionic/libc/include/ -I${PDK_ROOT}/bionic/libc/arch-arm/include/ -I${PDK_ROOT}/bionic/libc/kernel/common/  -I${PDK_ROOT}/bionic/libc/kernel/common/linux -I${PDK_ROOT}/bionic/libc/kernel/common/linux/ -I${PDK_ROOT}/bionic/libc/kernel/arch-arm/ -I${PDK_ROOT}/development/ndk/platforms/android-8/include -I${PDK_ROOT}/prebuilt/ndk/android-ndk-r4/platforms/android-8/arch-arm/usr/include/" LDFLAGS="-Wl,-rpath-link=${PDK_ROOT}/out/target/product/generic/system/lib -L${PDK_ROOT}/out/target/product/generic/system/lib" --without-bzip2
-  NOTE: if you want, add --with-webdav-props and --with-webdav-locks, those options doesn't require any extra libraries
-
+  NOTE: --with-webdav-props and --with-webdav-locks depends on libxml2 and libsqlite
+  
 * build lighttpd
     change PDK_ROOT variable in Android.mk fitting to your environment
     > mm
+
+== How to build lighttpd as one binary, all of modules are statically linked
+* to get basic knowledge, read Willem's "Lighttpd with static modules" http://codemonkeytips.blogspot.com/2010/02/lighttpd-with-static-modules.html
+* use Android.mk.static instead of Android.mk
+* edit Androd.mk.static, set BUILD_OPTION_MOD_xxx options true/false to enable/disable them
+* generate plugin-static.h manually, and copy it into ${lighttpd-build-top}/src/
+   this bug report helps you to know how plugin-static.h looks like. "dir-listing vs. index-file" http://redmine.lighttpd.net/issues/1893
+* copy Android.mk.static, and rename it to Android.mk
 
 == deploy lighttpd and modules
 * For your products, you should put them into system image. but here, I'm just testing on the emulator,
